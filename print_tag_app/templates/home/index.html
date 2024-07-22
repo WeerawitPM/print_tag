@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  <title>Home</title>
+{% endblock %}
+
+{% block content %}
+  <div class="row gap-3">
+    <form method="post" action="">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col">
+          <label for="fccode" class="form-label">Part No.</label>
+          <input type="text" class="form-control" id="fccode" name="fccode" value="{{fccode}}"/>
+        </div>
+        <div class="col">
+          <label for="supplier" class="form-label">Supplier</label>
+          <input type="text" class="form-control" id="supplier" name="supplier" value="{{supplier}}"/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <label for="model" class="form-label">Model</label>
+          <input type="text" class="form-control" id="model" name="model" value="{{model}}" />
+        </div>
+        <div class="col">
+          <label for="packing" class="form-label">Packing</label>
+          <input type="number" class="form-control" id="packing" name="packing" value="{{packing}}"/>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary mt-3">Search</button>
+    </form>
+    <div class="table-responsive card shadow-sm mt-3 p-3">
+      <table class="table table-borderless table-striped">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">FCSKID</th>
+            <th scope="col">FCCODE</th>
+            <th scope="col">FCNAME</th>
+            <th scope="col">FCSNAME</th>
+            <th scope="col">Supplier</th>
+            <th scope="col">Model</th>
+            <th scope="col">Packing</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
+            <tr>
+              <td><input type="checkbox" name="selected" value="{{ forloop.counter }}" class="form-check-input"></td>
+              <td>{{ row.0 }}</td>
+              <td>{{ row.1 }}</td>
+              <td>{{ row.2 }}</td>
+              <td>{{ row.3 }}</td>
+              <td>{{ supplier }}</td>
+              <td>{{ model }}</td>
+              <td>{{ packing }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+    <!-- Include jQuery and jQuery UI -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  
+    <script>
+      $(function() {
+        $("#fccode").autocomplete({
+          source: "{% url 'autocomplete' %}",
+          minLength: 2,
+          select: function(event, ui) {
+            $("#fccode").val(ui.item.value);
+            return false;
+          }
+        });
+      });
+    </script>
+{% endblock %}
