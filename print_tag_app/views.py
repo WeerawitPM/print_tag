@@ -180,6 +180,7 @@ def save_selected(request):
                 return HttpResponse("Login to JasperServer failed", status=login_response.status_code)
             
         if 'print_invoice' in request.POST:
+            print("Invoice")
             ref_invoice = RefInvoice.objects.create()
 
             for index in selected_indices:
@@ -197,22 +198,21 @@ def save_selected(request):
                 invoice = request.POST.get(f'invoice_{index}')
                 qr_code = f"{po_no}${invoice}${cust_sup}"
                 
-                for i in range(0, 6) :
-                    Tag.objects.create(
-                        qr_code=qr_code,
-                        invoice=invoice,
-                        po_no=po_no,
-                        cust_sup=cust_sup,
-                        part_name=part_name,
-                        part_no=part_no,
-                        lot_mat=lot_mat,
-                        lot_prod=lot_prod,
-                        model=model,
-                        mc=mc,
-                        date=date,
-                        qty=qty,
-                        ref_invoice=ref_invoice
-                    )
+                Invoice.objects.create(
+                    qr_code=qr_code,
+                    invoice=invoice,
+                    po_no=po_no,
+                    cust_sup=cust_sup,
+                    part_name=part_name,
+                    part_no=part_no,
+                    lot_mat=lot_mat,
+                    lot_prod=lot_prod,
+                    model=model,
+                    mc=mc,
+                    date=date,
+                    qty=qty,
+                    ref_invoice=ref_invoice
+                )
             
             # URL สำหรับล็อกอิน
             login_url = "http://192.168.20.16:8080/jasperserver/rest_v2/login?j_username=jasperadmin&j_password=jasperadmin"
@@ -228,7 +228,7 @@ def save_selected(request):
                 print(report_response)
 
                 if report_response.status_code == 200:
-                    file_name = f"report_{part_name}"
+                    file_name = f"report_{invoice}"
                     response = HttpResponse(report_response.content, content_type='application/pdf')
                     response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
                     return response

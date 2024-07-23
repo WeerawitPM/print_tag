@@ -9,31 +9,31 @@
         <div>
           <div class="row">
             <div class="col">
-              <label for="fccode" class="form-label">Part No.</label>
+              <label for="part_no" class="form-label">Part No.</label>
               <div class="input-group">
-                <input type="text" class="form-control" id="fccode" name="fccode" />
-                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+                <input type="text" class="form-control" id="part_no" name="part_no" />
+                <button type="button" class="btn btn-outline-primary" id="search-part-no"><i class="bi bi-search"></i></button>
               </div>
             </div>
             <div class="col">
               <label for="lot_mat" class="form-label">Lot Mat'l</label>
-              <input type="text" class="form-control" id="lot_mat" name="lot_mat" />
+              <input type="text" class="form-control" id="lot_mat" name="lot_mat" disabled/>
             </div>
           </div>
           <div class="row">
             <div class="col">
               <label for="lot_prod" class="form-label">Lot Prod</label>
-              <input type="text" class="form-control" id="lot_prod" name="lot_prod" />
+              <input type="text" class="form-control" id="lot_prod" name="lot_prod" disabled/>
             </div>
             <div class="col">
               <label for="model" class="form-label">Model</label>
-              <input type="text" class="form-control" id="model" name="model" />
+              <input type="text" class="form-control" id="model" name="model" disabled/>
             </div>
           </div>
           <div class="row">
             <div class="col">
               <label for="mc" class="form-label">M/C</label>
-              <input type="text" class="form-control" id="mc" name="mc" />
+              <input type="text" class="form-control" id="mc" name="mc" disabled/>
             </div>
             <div class="col">
               <label for="date" class="form-label">Date</label>
@@ -42,7 +42,6 @@
           </div>
         </div>
         <form method="post" action="save_selected">
-          <button type="button" class="btn btn-success mt-3" id="save-button">Save</button>
           <button type="submit" class="btn btn-success mt-3" name="print_tag">Print tag</button>
           <button type="submit" class="btn btn-success mt-3" name="print_invoice">Print Invoice</button>
           {% csrf_token %}
@@ -149,26 +148,21 @@
         });
     });
 
-    document.getElementById('save-button').addEventListener('click', function() {
-      var lotMat = document.getElementById('lot_mat').value;
-      var lotProd = document.getElementById('lot_prod').value;
-      var model = document.getElementById('model').value;
-      var mc = document.getElementById('mc').value;
-      var date = document.getElementById('date').value;
-
-      var rows = document.querySelectorAll('#modal-data tr');
-      rows.forEach(row => {
-        row.querySelector('input[name^="lot_mat"]').value = lotMat;
-        row.querySelector('input[name^="lot_mat"]').nextSibling.textContent = lotMat;
-        row.querySelector('input[name^="lot_prod"]').value = lotProd;
-        row.querySelector('input[name^="lot_prod"]').nextSibling.textContent = lotProd;
-        row.querySelector('input[name^="model"]').value = model;
-        row.querySelector('input[name^="model"]').nextSibling.textContent = model;
-        row.querySelector('input[name^="mc"]').value = mc;
-        row.querySelector('input[name^="mc"]').nextSibling.textContent = mc;
-        row.querySelector('input[name^="date"]').value = date;
-        row.querySelector('input[name^="date"]').nextSibling.textContent = date;
+    function updateTableFields(fieldId, fieldName) {
+      document.getElementById(fieldId).addEventListener('input', function() {
+        var newValue = this.value;
+        var rows = document.querySelectorAll('#modal-data tr');
+        rows.forEach(row => {
+          row.querySelector(`input[name^="${fieldName}"]`).value = newValue;
+          row.querySelector(`input[name^="${fieldName}"]`).nextSibling.textContent = newValue;
+        });
       });
-    });
+    }
+
+    updateTableFields('lot_mat', 'lot_mat');
+    updateTableFields('lot_prod', 'lot_prod');
+    updateTableFields('model', 'model');
+    updateTableFields('mc', 'mc');
+    updateTableFields('date', 'date');
   });
 </script>
