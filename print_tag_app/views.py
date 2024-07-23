@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 import requests
 import re
-from .models import Tag, RefTag, Packing
+from .models import Tag, RefTag, Packing, Invoice ,RefInvoice
 
 @csrf_exempt
 def index(request):
@@ -178,6 +178,64 @@ def save_selected(request):
                     return HttpResponse("Failed to retrieve the report", status=report_response.status_code)
             else:
                 return HttpResponse("Login to JasperServer failed", status=login_response.status_code)
+            
+        if 'print_invoice' in request.POST:
+            ref_invoice = RefInvoice.objects.create()
 
+            for index in selected_indices:
+                index = int(index)
+                po_no = request.POST.get(f'po_no_{index}')
+                cust_sup = request.POST.get(f'cust_sup_{index}')
+                part_name = request.POST.get(f'part_name_{index}')
+                part_no = request.POST.get(f'part_no_{index}')
+                lot_mat = request.POST.get(f'lot_mat_{index}')
+                lot_prod = request.POST.get(f'lot_prod_{index}')
+                model = request.POST.get(f'model_{index}')
+                mc = request.POST.get(f'mc_{index}')
+                date = request.POST.get(f'date_{index}')
+                qty = request.POST.get(f'qty_{index}')
+                invoice = request.POST.get(f'invoice_{index}')
+                qr_code = f"{po_no}${invoice}${cust_sup}"
+                
+                for i in range(0, 6) :
+                    Tag.objects.create(
+                        qr_code=qr_code,
+                        invoice=invoice,
+                        po_no=po_no,
+                        cust_sup=cust_sup,
+                        part_name=part_name,
+                        part_no=part_no,
+                        lot_mat=lot_mat,
+                        lot_prod=lot_prod,
+                        model=model,
+                        mc=mc,
+                        date=date,
+                        qty=qty,
+                        ref_invoice=ref_invoice
+                    )
+            
+            # URL สำหรับล็อกอิน
+            login_url = "http://192.168.20.16:8080/jasperserver/rest_v2/login?j_username=jasperadmin&j_password=jasperadmin"
+            login_response = requests.get(login_url)
+
+            if login_response.status_code == 200:
+                cookies = login_response.cookies
+
+                # URL ของรายงาน
+                report_url = f"http://192.168.20.16:8080/jasperserver/rest_v2/reports/aaa_report/Invoice_QRCODE_AAA.pdf?ParmID={ref_invoice}"
+                print(report_url)
+                report_response = requests.get(report_url, cookies=cookies)
+                print(report_response)
+
+                if report_response.status_code == 200:
+                    file_name = f"report_{part_name}"
+                    response = HttpResponse(report_response.content, content_type='application/pdf')
+                    response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
+                    return response
+                else:
+                    return HttpResponse("Failed to retrieve the report", status=report_response.status_code)
+            else:
+                return HttpResponse("Login to JasperServer failed", status=login_response.status_code)
+            
     return redirect('/')
 

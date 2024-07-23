@@ -46,4 +46,4 @@ class Invoice(models.Model):
     mc = models.CharField(max_length=100, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     qty = models.IntegerField(null=True, blank=True)
-    ref_tag = models.ForeignKey(RefInvoice, on_delete=models.CASCADE)  # Foreign key field]
+    ref_invoice = models.ForeignKey(RefInvoice, on_delete=models.CASCADE)  # Foreign key field]
