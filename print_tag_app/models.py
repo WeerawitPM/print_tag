@@ -18,4 +18,11 @@ class Tag(models.Model):
     mc = models.CharField(max_length=100, null=True, blank=True)
     date = models.DateField(null=True, blank=True)
     qty = models.IntegerField(null=True, blank=True)
-    ref_tag = models.ForeignKey(RefTag, on_delete=models.CASCADE)  # Foreign key field
+    ref_tag = models.ForeignKey(RefTag, on_delete=models.CASCADE)  # Foreign key field]
+    
+class Packing(models.Model):
+    part_no = models.CharField(max_length=255, null=False, unique=True)
+    std_packing = models.IntegerField(null=True, blank=True, default=0)
+    
+    def __str__(self):
+        return str(self.part_no)  # Convert to string for a more descriptive representation

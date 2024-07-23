@@ -10,93 +10,66 @@
       {% csrf_token %}
       <div class="row">
         <div class="col">
-          <label for="fccode" class="form-label">Part No.</label>
-          <input type="text" class="form-control" id="fccode" name="fccode" value="{{ fccode }}" />
+          <label for="fcrefno" class="form-label">Invoice</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="fcrefno" name="fcrefno" value="{{ fcrefno }}" />
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+          </div>
         </div>
+      </div>
+      <div class="row">
         <div class="col">
           <label for="po_no" class="form-label">PO No.</label>
           <input type="text" class="form-control" id="po_no" name="po_no" value="{{ po_no }}" />
         </div>
-      </div>
-      <div class="row">
         <div class="col">
           <label for="cust_sup" class="form-label">Cust/Sup</label>
           <input type="text" class="form-control" id="cust_sup" name="cust_sup" value="{{ cust_sup }}" />
         </div>
-        <div class="col">
-          <label for="lot_mat" class="form-label">Lot Mat'l</label>
-          <input type="text" class="form-control" id="lot_mat" name="lot_mat" value="{{ lot_mat }}" />
-        </div>
       </div>
       <div class="row">
         <div class="col">
-          <label for="lot_prod" class="form-label">Lot Prod</label>
-          <input type="text" class="form-control" id="lot_prod" name="lot_prod" value="{{ lot_prod }}" />
+          <label for="start_date" class="form-label">Start Date</label>
+          <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" />
         </div>
         <div class="col">
-          <label for="model" class="form-label">Model</label>
-          <input type="text" class="form-control" id="model" name="model" value="{{ model }}" />
+          <label for="end_date" class="form-label">End Date</label>
+          <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" />
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <label for="mc" class="form-label">M/C</label>
-          <input type="text" class="form-control" id="mc" name="mc" value="{{ mc }}" />
-        </div>
-        <div class="col">
-          <label for="date" class="form-label">Date</label>
-          <input type="date" class="form-control" id="date" name="date" value="{{ date }}" />
-        </div>
-        <div class="col">
-          <label for="qty" class="form-label">Qty</label>
-          <input type="number" class="form-control" id="qty" name="qty" value="{{ qty }}" />
-        </div>
-      </div>
-      <button type="submit" class="btn btn-primary mt-3">Search</button>
     </form>
-    <form method="post" action="save_selected">
-      {% csrf_token %}
-      <div class="table-responsive card shadow-sm mt-3 p-3">
-        <table class="table table-borderless table-striped">
-          <thead>
+    <div class="table-responsive card shadow-sm mt-3 p-3">
+      <table class="table table-borderless table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Invoice</th>
+            <th scope="col">PO</th>
+            <th scope="col">Cust/Sup</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">PO No.</th>
-              <th scope="col">Cust/Sup</th>
-              <th scope="col">Part Name</th>
-              <th scope="col">Part No.</th>
-              <th scope="col">Lot Mat'l</th>
-              <th scope="col">Lot Prod</th>
-              <th scope="col">Model</th>
-              <th scope="col">M/C</th>
-              <th scope="col">Date</th>
-              <th scope="col">Qty</th>
+              <input type="hidden" name="fcskid_{{ forloop.counter }}" value="{{ row.0 }}" />
+              <td>
+                <input type="hidden" name="invoice_{{ forloop.counter }}" value="{{ row.2 }}" />{{ row.2 }}
+              </td>
+              <td>
+                <input type="hidden" name="po_{{ forloop.counter }}" value="{{ row.3 }}" />{{ row.3 }}
+              </td>
+              <td>
+                <input type="hidden" name="cust_sup_{{ forloop.counter }}" value="{{ row.6 }}" />{{ row.6 }}
+              </td>
+              <td>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-fcskid="{{ row.0 }}" onclick="btn_onClick(this)">Print</button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {% for row in data %}
-              <tr>
-                <td>
-                  <input type="checkbox" name="selected" value="{{ forloop.counter }}" class="form-check-input" />
-                </td>
-                <td><input type="hidden" name="po_no_{{ forloop.counter }}" value="{{ po_no }}" />{{ po_no }}</td>
-                <td><input type="hidden" name="po_no_{{ forloop.counter }}" value="{{ po_no }}" />{{ po_no }}</td>
-                <td><input type="hidden" name="cust_sup_{{ forloop.counter }}" value="{{ cust_sup }}" />{{ cust_sup }}</td>
-                <td><input type="hidden" name="part_name_{{ forloop.counter }}" value="{{ row.1 }}" />{{ row.1 }}</td>
-                <td><input type="hidden" name="part_no_{{ forloop.counter }}" value="{{ row.0 }}" />{{ row.0 }}</td>
-                <td><input type="hidden" name="lot_mat_{{ forloop.counter }}" value="{{ lot_mat }}" />{{ lot_mat }}</td>
-                <td><input type="hidden" name="lot_prod_{{ forloop.counter }}" value="{{ lot_prod }}" />{{ lot_prod }}</td>
-                <td><input type="hidden" name="model_{{ forloop.counter }}" value="{{ model }}" />{{ model }}</td>
-                <td><input type="hidden" name="mc_{{ forloop.counter }}" value="{{ mc }}" />{{ mc }}</td>
-                <td><input type="hidden" name="date_{{ forloop.counter }}" value="{{ date }}" />{{ date }}</td>
-                <td><input type="hidden" name="qty_{{ forloop.counter }}" value="{{ qty }}" />{{ qty }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-      <button type="submit" class="btn btn-success mt-3">Save</button>
-    </form>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% include 'components/modal.html' %}
   </div>
 
   <!-- Include jQuery and jQuery UI -->
@@ -106,11 +79,11 @@
 
   <script>
     $(function () {
-      $('#fccode').autocomplete({
+      $('#fcrefno').autocomplete({
         source: "{% url 'autocomplete' %}",
         minLength: 2,
         select: function (event, ui) {
-          $('#fccode').val(ui.item.value)
+          $('#fcrefno').val(ui.item.value)
           return false
         }
       })

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
-from .models import Tag, RefTag
+from .models import Tag, RefTag, Packing
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('qr_code', 'po_no', 'cust_sup', 'part_name', 'part_no', 'lot_mat', 'lot_prod', 'model', 'mc', 'date', 'qty', 'ref_tag_link')  # Updated field names
@@ -19,6 +19,8 @@ class TagAdmin(admin.ModelAdmin):
 class RefTagAdmin(admin.ModelAdmin):
     list_display = ('ref_id',)
     search_fields = ('ref_id',)
+    
 
 admin.site.register(Tag, TagAdmin)
 admin.site.register(RefTag, RefTagAdmin)
+admin.site.register(Packing)
