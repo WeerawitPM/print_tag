@@ -164,5 +164,22 @@
     updateTableFields('model', 'model');
     updateTableFields('mc', 'mc');
     updateTableFields('date', 'date');
+
+    document.getElementById('search-part-no').addEventListener('click', function() {
+      var partNo = document.getElementById('part_no').value.toLowerCase();
+      filterTable(partNo);
+    });
+
+    function filterTable(partNo) {
+      var rows = document.querySelectorAll('#modal-data tr');
+      rows.forEach(row => {
+        var partNoCell = row.querySelector('input[name^="part_no_"]').value.toLowerCase();
+        if (partNoCell.includes(partNo)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
   });
 </script>
