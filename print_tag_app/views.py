@@ -125,9 +125,7 @@ def save_selected(request):
         # ตรวจสอบปุ่มที่ถูกกด
         if 'print_tag' in request.POST:
             ref_tag = RefTag.objects.create()
-            report_type = 'tag'
-            report_url = f"http://192.168.20.16:8080/jasperserver/rest_v2/reports/aaa_report/tags.pdf?ParmID={ref_tag}"
-            
+
             for index in selected_indices:
                 index = int(index)
                 po_no = request.POST.get(f'po_no_{index}')
@@ -139,10 +137,10 @@ def save_selected(request):
                 model = request.POST.get(f'model_{index}')
                 mc = request.POST.get(f'mc_{index}')
                 date = request.POST.get(f'date_{index}')
-                qty = request.POST.get(f'packing_{index}')
+                qty = request.POST.get(f'qty_{index}')
                 qr_code = f"{part_no}${qty}${po_no}${cust_sup}"
-            
-                for _ in range(6):
+                
+                for i in range(0, 6) :
                     Tag.objects.create(
                         qr_code=qr_code,
                         po_no=po_no,
@@ -157,57 +155,29 @@ def save_selected(request):
                         qty=qty,
                         ref_tag=ref_tag
                     )
-                
-        elif 'print_invoice' in request.POST:
-            ref_tag = RefTag.objects.create()
-            report_type = 'tag'
-            report_url = f"http://192.168.20.16:8080/jasperserver/rest_v2/reports/aaa_report/Invoice_QRCODE_AAA.pdf?ParmID={ref_tag}"
-
-            for index in selected_indices:
-                index = int(index)
-                po_no = request.POST.get(f'po_no_{index}')
-                cust_sup = request.POST.get(f'cust_sup_{index}')
-                part_name = request.POST.get(f'part_name_{index}')
-                part_no = request.POST.get(f'part_no_{index}')
-                lot_mat = request.POST.get(f'lot_mat_{index}')
-                lot_prod = request.POST.get(f'lot_prod_{index}')
-                model = request.POST.get(f'model_{index}')
-                mc = request.POST.get(f'mc_{index}')
-                date = request.POST.get(f'date_{index}')
-                qty = request.POST.get(f'packing_{index}')
-                qr_code = f"{po_no}${qty}${po_no}${cust_sup}"
             
-                for _ in range(6):
-                    Tag.objects.create(
-                        qr_code=qr_code,
-                        po_no=po_no,
-                        cust_sup=cust_sup,
-                        part_name=part_name,
-                        part_no=part_no,
-                        date=date,
-                        qty=qty,
-                        ref_tag=ref_tag
-                    )
-        else:
-            return HttpResponse("Invalid form submission", status=400)
-        
-        # URL สำหรับล็อกอิน
-        login_url = "http://192.168.20.16:8080/jasperserver/rest_v2/login?j_username=jasperadmin&j_password=jasperadmin"
-        login_response = requests.get(login_url)
+            # URL สำหรับล็อกอิน
+            login_url = "http://192.168.20.16:8080/jasperserver/rest_v2/login?j_username=jasperadmin&j_password=jasperadmin"
+            login_response = requests.get(login_url)
 
-        if login_response.status_code == 200:
-            cookies = login_response.cookies
-            report_response = requests.get(report_url, cookies=cookies)
+            if login_response.status_code == 200:
+                cookies = login_response.cookies
 
-            if report_response.status_code == 200:
-                file_name = f"report_{report_type}_{ref_tag.id}"
-                response = HttpResponse(report_response.content, content_type='application/pdf')
-                response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
-                return response
+                # URL ของรายงาน
+                report_url = f"http://192.168.20.16:8080/jasperserver/rest_v2/reports/aaa_report/tags.pdf?ParmID={ref_tag}"
+                print(report_url)
+                report_response = requests.get(report_url, cookies=cookies)
+                print(report_response)
+
+                if report_response.status_code == 200:
+                    file_name = f"report_{part_name}"
+                    response = HttpResponse(report_response.content, content_type='application/pdf')
+                    response['Content-Disposition'] = f'attachment; filename="{file_name}.pdf"'
+                    return response
+                else:
+                    return HttpResponse("Failed to retrieve the report", status=report_response.status_code)
             else:
-                return HttpResponse("Failed to retrieve the report", status=report_response.status_code)
-        else:
-            return HttpResponse("Login to JasperServer failed", status=login_response.status_code)
+                return HttpResponse("Login to JasperServer failed", status=login_response.status_code)
 
     return redirect('/')
 
