@@ -68,8 +68,8 @@
                   <input type="hidden" name="date_{{ forloop.counter }}" value="{{ row.7 }}" />{{ row.7 }}
                 </td>
                 <td>
-                  <a href="{% url 'get_invoice_data' row.0 %}" class="btn btn-primary" target="_blank">Print Tag</a>
-                  <button type="submit" class="btn btn-success" name="print_invoice">Print Invoice</button>
+                  <a href="{% url 'get_invoice_data' row.0 %}" class="btn btn-primary" target="_blank"><i class="bi bi-tag-fill me-2"></i>Print Tag</a>
+                  <button type="submit" class="btn btn-success" name="print_invoice"><i class="bi bi-qr-code me-2"></i>Print Invoice</button>
                 </td>
               </tr>
             </form>

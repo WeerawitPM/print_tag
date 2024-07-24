@@ -10,6 +10,7 @@ from .form import UploadFileForm
 from django.contrib import messages
 import pandas as pd
 
+
 @csrf_exempt
 def index(request):
     data = []
@@ -41,7 +42,7 @@ def index(request):
                     cleaned_row[3] = cleaned_po
                 else:
                     cleaned_row[3] = "-"  # Handle cases where no PO is found
-                
+
                 # Format the date
                 if isinstance(cleaned_row[7], datetime):
                     cleaned_row[7] = cleaned_row[7].strftime("%d-%m-%Y")
@@ -78,7 +79,7 @@ def index(request):
                     cleaned_row[3] = cleaned_po
                 else:
                     cleaned_row[3] = "-"  # Handle cases where no PO is found
-                
+
                 # Format the date
                 if isinstance(cleaned_row[7], datetime):
                     cleaned_row[7] = cleaned_row[7].strftime("%d-%m-%Y")
@@ -93,6 +94,7 @@ def index(request):
                 "data": cleaned_data,
             },
         )
+
 
 def autocomplete(request):
     if "term" in request.GET:
@@ -109,6 +111,7 @@ def autocomplete(request):
         return JsonResponse(part_codes, safe=False)
     return JsonResponse([], safe=False)
 
+
 @csrf_exempt
 def save_selected(request):
     invoice = ""
@@ -123,7 +126,7 @@ def save_selected(request):
                 for r in request.POST:
                     print(f"{seq} ==> {r}")
                     seq += 1
-                
+
                 index = int(index)
                 po_no = request.POST.get(f"po_no_{index}")
                 cust_sup = request.POST.get(f"cust_sup_{index}")
@@ -136,12 +139,12 @@ def save_selected(request):
                 date = request.POST.get(f"date_{index}")
                 qty = request.POST.get(f"packing_{index}")
                 qr_code = f"{part_no}${qty}${po_no}${cust_sup}"
-                
+
                 Packing.objects.update_or_create(
                     part_no=part_no,
                     defaults={"std_packing": int(qty)},
                 )
-                
+
                 for i in range(0, 6):
                     tag = Tag()
                     tag.qr_code = qr_code
@@ -264,6 +267,7 @@ def save_selected(request):
 
     return redirect("/")
 
+
 def get_invoice_data(request, fcskid):
     po = ""
     cust = ""
@@ -297,7 +301,7 @@ def get_invoice_data(request, fcskid):
             cleaned_data.append(cleaned_row)
             po = cleaned_row[3]
             cust = cleaned_row[5]
-            
+
             ### Packing
             stdQty = 0
             p = Packing.objects.filter(part_no=str(cleaned_row[8]).strip()).first()
@@ -312,28 +316,30 @@ def get_invoice_data(request, fcskid):
         {"data": cleaned_data, "po": po, "cust": cust},
     )
 
+
 def upload_packing(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            excel_file = request.FILES['file']
+            excel_file = request.FILES["file"]
             try:
                 df = pd.read_excel(excel_file)
                 for _, row in df.iterrows():
-                    part_no = row['part_no']
-                    std_packing = row['std_packing']
+                    part_no = row["part_no"]
+                    std_packing = row["std_packing"]
                     Packing.objects.update_or_create(
                         part_no=part_no,
                         defaults={"std_packing": int(std_packing)},
-                )
-                messages.success(request, 'Data uploaded successfully.')
-                return redirect('/upload_packing')
+                    )
+                messages.success(request, "Data uploaded successfully.")
+                return redirect("/upload_packing")
             except Exception as e:
-                messages.error(request, f'Error uploading data: {e}')
-                return redirect('/upload_packing')
+                messages.error(request, f"Error uploading data: {e}")
+                return redirect("/upload_packing")
     else:
         form = UploadFileForm()
-    return render(request, 'upload_packing/index.html', {'form': form})
+    return render(request, "upload_packing/index.html", {"form": form})
+
 
 # def get_modal_data(request, fcskid):
 #     packings = Packing.objects.all()
@@ -347,8 +353,8 @@ def upload_packing(request):
 
 #     with connections["formula_aaa"].cursor() as cursor:
 #         query = """
-#             Select G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE, P.FCCODE, P.FCNAME, P.FCSNAME 
-#             from GLREF as G 
+#             Select G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE, P.FCCODE, P.FCNAME, P.FCSNAME
+#             from GLREF as G
 #             INNER JOIN COOR as C ON C.FCSKID = G.FCCOOR
 #             INNER JOIN REFPROD as R ON R.FCGLREF = G.FCSKID
 #             INNER JOIN PROD as P ON P.FCSKID = R.FCPROD
