@@ -5,6 +5,7 @@ from django.http import JsonResponse, HttpResponse
 import requests
 import re
 from .models import Tag, RefTag, Packing, Invoice, RefInvoice
+from datetime import datetime
 
 
 @csrf_exempt
@@ -15,10 +16,12 @@ def index(request):
         fcrefno = request.POST.get("fcrefno")
         with connections["formula_aaa"].cursor() as cursor:
             query = """
-                        Select Top 100 G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE from GLREF as G 
-                        INNER JOIN COOR as C ON C.FCSKID = G.FCCOOR
-                        WHERE G.FCREFNO LIKE %s AND G.FCBOOK = %s ORDER BY G.FDDATE DESC
-                        """
+                SELECT TOP 100 G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE 
+                FROM GLREF AS G 
+                INNER JOIN COOR AS C ON C.FCSKID = G.FCCOOR
+                WHERE G.FCREFNO LIKE %s AND G.FCBOOK = %s 
+                ORDER BY G.FDDATE DESC
+            """
             cursor.execute(query, [f"%{fcrefno}%", "TrDEJl01"])
             data = cursor.fetchall()
 
@@ -36,7 +39,12 @@ def index(request):
                     cleaned_row[3] = cleaned_po
                 else:
                     cleaned_row[3] = "-"  # Handle cases where no PO is found
+                
+                # Format the date
+                if isinstance(cleaned_row[7], datetime):
+                    cleaned_row[7] = cleaned_row[7].strftime("%d-%m-%Y")
                 cleaned_data.append(cleaned_row)
+
             data = cleaned_data
 
         return render(
@@ -45,10 +53,12 @@ def index(request):
     else:
         with connections["formula_aaa"].cursor() as cursor:
             query = """
-                Select Top 100 G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE from GLREF as G 
-                INNER JOIN COOR as C ON C.FCSKID = G.FCCOOR
-                WHERE G.FCBOOK = %s ORDER BY G.FDDATE DESC
-                """
+                SELECT TOP 100 G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE 
+                FROM GLREF AS G 
+                INNER JOIN COOR AS C ON C.FCSKID = G.FCCOOR
+                WHERE G.FCBOOK = %s 
+                ORDER BY G.FDDATE DESC
+            """
             cursor.execute(query, ["TrDEJl01"])
             data = cursor.fetchall()
 
@@ -66,7 +76,12 @@ def index(request):
                     cleaned_row[3] = cleaned_po
                 else:
                     cleaned_row[3] = "-"  # Handle cases where no PO is found
+                
+                # Format the date
+                if isinstance(cleaned_row[7], datetime):
+                    cleaned_row[7] = cleaned_row[7].strftime("%d-%m-%Y")
                 cleaned_data.append(cleaned_row)
+
             data = cleaned_data
 
         return render(
@@ -309,7 +324,6 @@ def get_invoice_data(request, fcskid):
                 field.strip() if isinstance(field, str) else field for field in row
             ]
             # Extract and clean PO number from row[3] (the 4th field)
-            print(cleaned_row[3])
             po_match = re.search(r"(PO[.-]\w+)", cleaned_row[3])
             if po_match:
                 cleaned_po = po_match.group(0)

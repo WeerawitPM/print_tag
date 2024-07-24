@@ -13,7 +13,7 @@
           <label for="part_no" class="form-label">Part No.</label>
           <div class="input-group">
             <input type="text" class="form-control" id="part_no" name="part_no" value="{{ part_no }}" />
-            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+            {% comment %} <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button> {% endcomment %}
           </div>
         </div>
         <div class="col">
@@ -73,7 +73,7 @@
           </thead>
           <tbody>
             {% for row in data %}
-              <tr>
+              <tr class="data-row">
                 <td>
                   <input type="checkbox" name="selected" value="{{ forloop.counter }}" class="form-check-input" />
                 </td>
@@ -104,7 +104,7 @@
                   <input type="hidden" name="date_{{ forloop.counter }}" value="{{ date }}" />{{ date }}
                 </td>
                 <td>
-                  <input type="number" name="packing_{{ forloop.counter }}" value="{{ row.11 }}" class="form-control"/>
+                  <input type="number" name="packing_{{ forloop.counter }}" value="{{ row.11 }}" class="form-control" />
                 </td>
               </tr>
             {% endfor %}
@@ -119,5 +119,22 @@
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css" />
 
-  <script></script>
+  <script>
+    $(document).ready(function () {
+      $('#date').on('change', function () {
+        var dateValue = $(this).val()
+        $('input[name^="date_"]').val(dateValue)
+        $('td:has(input[name^="date_"])').each(function () {
+          $(this).text(dateValue)
+        })
+      })
+    
+      $('#part_no').on('keyup', function () {
+        var value = $(this).val().toLowerCase()
+        $('.data-row').filter(function () {
+          $(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().indexOf(value) > -1)
+        })
+      })
+    })
+  </script>
 {% endblock %}
