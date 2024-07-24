@@ -39,37 +39,39 @@
       </div>
     </form>
     <div class="table-responsive card shadow-sm mt-3 p-3">
-      <table class="table table-borderless table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Invoice</th>
-            <th scope="col">PO</th>
-            <th scope="col">Cust/Sup</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in data %}
+        <table class="table table-borderless table-striped">
+          <thead>
             <tr>
-              <input type="hidden" name="fcskid_{{ forloop.counter }}" value="{{ row.0 }}" />
-              <td>
-                <input type="hidden" name="invoice_{{ forloop.counter }}" value="{{ row.2 }}" />{{ row.2 }}
-              </td>
-              <td>
-                <input type="hidden" name="po_{{ forloop.counter }}" value="{{ row.3 }}" />{{ row.3 }}
-              </td>
-              <td>
-                <input type="hidden" name="cust_sup_{{ forloop.counter }}" value="{{ row.6 }}" />{{ row.6 }}
-              </td>
-              <td>
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" data-fcskid="{{ row.0 }}">Print</button>
-              </td>
+              <th scope="col">Invoice</th>
+              <th scope="col">PO</th>
+              <th scope="col">Cust/Sup</th>
+              <th scope="col">Action</th>
             </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for row in data %}
+            <form method="post" action="/save_selected">
+              <tr>
+                <input type="hidden" name="fcskid_{{ forloop.counter }}" value="{{ row.0 }}" />
+                <td>
+                  <input type="hidden" name="invoice_{{ forloop.counter }}" value="{{ row.2 }}" />{{ row.2 }}
+                </td>
+                <td>
+                  <input type="hidden" name="po_{{ forloop.counter }}" value="{{ row.3 }}" />{{ row.3 }}
+                </td>
+                <td>
+                  <input type="hidden" name="cust_sup_{{ forloop.counter }}" value="{{ row.5 }}" />{{ row.6 }}
+                </td>
+                <td>
+                  <a href="{% url 'get_invoice_data' row.0 %}" class="btn btn-primary" target="_blank">Print Tag</a>
+                  <button type="submit" class="btn btn-success" name="print_invoice">Print Invoice</button>
+                </td>
+              </tr>
+            </form>
+            {% endfor %}
+          </tbody>
+        </table>
     </div>
-    {% include 'components/modal.html' %}
   </div>
 
   <!-- Include jQuery and jQuery UI -->
