@@ -6,54 +6,54 @@
 
 {% block content %}
   <div class="row gap-3">
-    <form method="post" action="" class="card shadow-sm p-4">
-      {% csrf_token %}
-      <div class="row">
-        <div class="col">
-          <label for="part_no" class="form-label">Part No.</label>
-          <div class="input-group">
-            <input type="text" class="form-control" id="part_no" name="part_no" value="{{ part_no }}" />
-            {% comment %} <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button> {% endcomment %}
-          </div>
-        </div>
-        <div class="col">
-          <label for="po_no" class="form-label">PO No.</label>
-          <input type="text" class="form-control" id="po_no" name="po_no" value="{{ po }}" disabled />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <label for="cust_sup" class="form-label">Cust/Sup</label>
-          <input type="text" class="form-control" id="cust_sup" name="cust_sup" value="{{ cust }}" disabled />
-        </div>
-        <div class="col">
-          <label for="lot_mat" class="form-label">Lot Mat'l</label>
-          <input type="text" class="form-control" id="lot_mat" name="lot_mat" value="{{ lot_mat }}" disabled />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <label for="lot_prod" class="form-label">Lot Prod</label>
-          <input type="text" class="form-control" id="lot_prod" name="lot_prod" value="{{ lot_prod }}" disabled />
-        </div>
-        <div class="col">
-          <label for="model" class="form-label">Model</label>
-          <input type="text" class="form-control" id="model" name="model" value="{{ model }}" disabled />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <label for="mc" class="form-label">M/C</label>
-          <input type="text" class="form-control" id="mc" name="mc" value="{{ mc }}" disabled />
-        </div>
-        <div class="col">
-          <label for="date" class="form-label">Date</label>
-          <input type="date" class="form-control" id="date" name="date" value="{{ date }}" />
-        </div>
-      </div>
-    </form>
     <form method="post" action="/save_selected">
       {% csrf_token %}
+      <div class="card shadow-sm p-4">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col">
+            <label for="part_no" class="form-label">Part No.</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="part_no" name="part_no" value="{{ part_no }}" />
+              {% comment %} <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button> {% endcomment %}
+            </div>
+          </div>
+          <div class="col">
+            <label for="po_no" class="form-label">PO No.</label>
+            <input type="text" class="form-control" id="po_no" name="po_no" value="{{ po }}" disabled />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label for="cust_sup" class="form-label">Cust/Sup</label>
+            <input type="text" class="form-control" id="cust_sup" name="cust_sup" value="{{ cust }}" disabled />
+          </div>
+          <div class="col">
+            <label for="lot_mat" class="form-label">Lot Mat'l</label>
+            <input type="text" class="form-control" id="lot_mat" name="lot_mat" value="{{ lot_mat }}" disabled />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label for="lot_prod" class="form-label">Lot Prod</label>
+            <input type="text" class="form-control" id="lot_prod" name="lot_prod" value="{{ lot_prod }}" disabled />
+          </div>
+          <div class="col">
+            <label for="model" class="form-label">Model</label>
+            <input type="text" class="form-control" id="model" name="model" value="{{ model }}" disabled />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <label for="mc" class="form-label">M/C</label>
+            <input type="text" class="form-control" id="mc" name="mc" value="{{ mc }}" disabled />
+          </div>
+          <div class="col">
+            <label for="date" class="form-label">Date</label>
+            <input type="date" class="form-control" id="date" name="date" value="{{ date }}" />
+          </div>
+        </div>
+      </div>
       <button type="submit" class="btn btn-success mt-3" name="print_tag" id="printTagBtn"><i class="bi bi-printer-fill me-2"></i>Print tag</button>
       <div class="table-responsive card shadow-sm mt-3 p-3">
         <table class="table table-borderless table-striped">
@@ -120,15 +120,15 @@
       <div class="toast-body fs-6">กรุณากรอก packing</div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
-  </div>  
+  </div>
 
   <!-- Toast message HTML for no selection -->
-<div class="toast align-items-center text-bg-warning border-0" id="selectionToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem;">
-  <div class="d-flex">
-    <div class="toast-body fs-6">กรุณาเลือกข้อมูลที่ต้องการ Print</div>
-    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  <div class="toast align-items-center text-bg-warning border-0" id="selectionToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem;">
+    <div class="d-flex">
+      <div class="toast-body fs-6">กรุณาเลือกข้อมูลที่ต้องการ Print</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
   </div>
-</div>
 
   <!-- Include jQuery and jQuery UI -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -138,12 +138,12 @@
   <script>
     $(document).ready(function () {
       $('#date').on('change', function () {
-        var dateValue = $(this).val();
+        var dateValue = $(this).val()
         $('input[name="date_1"]').each(function () {
-          $(this).val(dateValue);
-          $(this).closest('td').text(dateValue); // แสดงค่า date ในแต่ละ td
-        });
-      });
+          $(this).val(dateValue)
+          $(this).closest('td').text(dateValue) // แสดงค่า date ในแต่ละ td
+        })
+      })
     
       $('#part_no').on('keyup', function () {
         var value = $(this).val().toLowerCase()
@@ -154,30 +154,29 @@
     })
     
     $('#printTagBtn').on('click', function (event) {
-      var isValid = true;
-      var isAnySelected = false;
+      var isValid = true
+      var isAnySelected = false
       $('input[name="selected"]:checked').each(function () {
-        isAnySelected = true;
-        var rowIndex = $(this).val();
-        var packingValue = $('input[name="packing_' + rowIndex + '"]').val();
+        isAnySelected = true
+        var rowIndex = $(this).val()
+        var packingValue = $('input[name="packing_' + rowIndex + '"]').val()
         if (packingValue <= 0) {
-          isValid = false;
-          return false; // Break the loop
+          isValid = false
+          return false // Break the loop
         }
-      });
+      })
       if (!isAnySelected) {
-        isValid = false;
-        var selectionToast = new bootstrap.Toast(document.getElementById('selectionToast'));
-        selectionToast.show();
+        isValid = false
+        var selectionToast = new bootstrap.Toast(document.getElementById('selectionToast'))
+        selectionToast.show()
       }
       if (!isValid) {
-        event.preventDefault();
+        event.preventDefault()
         if (isAnySelected) {
-          var packingToast = new bootstrap.Toast(document.getElementById('packingToast'));
-          packingToast.show();
+          var packingToast = new bootstrap.Toast(document.getElementById('packingToast'))
+          packingToast.show()
         }
       }
-    });    
-    
+    })
   </script>
 {% endblock %}

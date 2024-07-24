@@ -122,10 +122,10 @@ def save_selected(request):
         if "print_tag" in request.POST:
             ref_tag = RefTag.objects.create()
             for index in selected_indices:
-                seq = 0
-                for r in request.POST:
-                    print(f"{seq} ==> {r}")
-                    seq += 1
+                # seq = 0
+                # for r in request.POST:
+                #     print(f"{seq} ==> {r}")
+                #     seq += 1
 
                 index = int(index)
                 po_no = request.POST.get(f"po_no_{index}")
@@ -136,7 +136,7 @@ def save_selected(request):
                 lot_prod = request.POST.get(f"lot_prod_{index}")
                 model = request.POST.get(f"model_{index}")
                 mc = request.POST.get(f"mc_{index}")
-                date = request.POST.get(f"date_{index}")
+                date = request.POST.get(f"date")
                 qty = request.POST.get(f"packing_{index}")
                 qr_code = f"{part_no}${qty}${po_no}${cust_sup}"
 
