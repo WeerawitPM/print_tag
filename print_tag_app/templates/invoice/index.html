@@ -101,7 +101,7 @@
                   <input type="hidden" name="mc_{{ forloop.counter }}" value="{{ mc }}" />{{ mc }}
                 </td>
                 <td>
-                  <input type="hidden" name="date_{{ forloop.counter }}" value="{{ date }}" />{{ date }}
+                  <input type="hidden" name="date_1" value="{{ date_1 }}" />
                 </td>
                 <td>
                   <input type="number" name="packing_{{ forloop.counter }}" value="{{ row.11 }}" class="form-control" />
@@ -122,6 +122,14 @@
     </div>
   </div>  
 
+  <!-- Toast message HTML for no selection -->
+<div class="toast align-items-center text-bg-warning border-0" id="selectionToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem;">
+  <div class="d-flex">
+    <div class="toast-body fs-6">กรุณาเลือกข้อมูลที่ต้องการ Print</div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
+
   <!-- Include jQuery and jQuery UI -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
@@ -130,12 +138,12 @@
   <script>
     $(document).ready(function () {
       $('#date').on('change', function () {
-        var dateValue = $(this).val()
-        $('input[name^="date_"]').val(dateValue)
-        $('td:has(input[name^="date_"])').each(function () {
-          $(this).text(dateValue)
-        })
-      })
+        var dateValue = $(this).val();
+        $('input[name="date_1"]').each(function () {
+          $(this).val(dateValue);
+          $(this).closest('td').text(dateValue); // แสดงค่า date ในแต่ละ td
+        });
+      });
     
       $('#part_no').on('keyup', function () {
         var value = $(this).val().toLowerCase()
@@ -146,20 +154,30 @@
     })
     
     $('#printTagBtn').on('click', function (event) {
-      var isValid = true
+      var isValid = true;
+      var isAnySelected = false;
       $('input[name="selected"]:checked').each(function () {
-        var rowIndex = $(this).val()
-        var packingValue = $('input[name="packing_' + rowIndex + '"]').val()
+        isAnySelected = true;
+        var rowIndex = $(this).val();
+        var packingValue = $('input[name="packing_' + rowIndex + '"]').val();
         if (packingValue <= 0) {
-          isValid = false
-          return false // Break the loop
+          isValid = false;
+          return false; // Break the loop
         }
-      })
-      if (!isValid) {
-        event.preventDefault()
-        var toast = new bootstrap.Toast(document.getElementById('packingToast'))
-        toast.show()
+      });
+      if (!isAnySelected) {
+        isValid = false;
+        var selectionToast = new bootstrap.Toast(document.getElementById('selectionToast'));
+        selectionToast.show();
       }
-    })
+      if (!isValid) {
+        event.preventDefault();
+        if (isAnySelected) {
+          var packingToast = new bootstrap.Toast(document.getElementById('packingToast'));
+          packingToast.show();
+        }
+      }
+    });    
+    
   </script>
 {% endblock %}

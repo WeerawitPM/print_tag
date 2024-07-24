@@ -109,47 +109,6 @@ def autocomplete(request):
         return JsonResponse(part_codes, safe=False)
     return JsonResponse([], safe=False)
 
-def get_modal_data(request, fcskid):
-    packings = Packing.objects.all()
-    packing_dict = {
-        packing.part_no: {
-            "part_no": packing.part_no,
-            "std_packing": packing.std_packing,
-        }
-        for packing in packings
-    }
-
-    with connections["formula_aaa"].cursor() as cursor:
-        query = """
-            Select G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE, P.FCCODE, P.FCNAME, P.FCSNAME 
-            from GLREF as G 
-            INNER JOIN COOR as C ON C.FCSKID = G.FCCOOR
-            INNER JOIN REFPROD as R ON R.FCGLREF = G.FCSKID
-            INNER JOIN PROD as P ON P.FCSKID = R.FCPROD
-            WHERE G.FCSKID = %s
-            """
-        cursor.execute(query, [fcskid])
-        data = cursor.fetchall()
-
-        cleaned_data = []
-        for row in data:
-            cleaned_row = [
-                field.strip() if isinstance(field, str) else field for field in row
-            ]
-            # Extract and clean PO number from row[3] (the 4th field)
-            po_match = re.search(r"(PO[.-]\w+)", cleaned_row[3])
-            if po_match:
-                cleaned_po = po_match.group(0)
-                # Remove trailing 'Rem' if it exists
-                cleaned_po = re.sub(r"Rem$", "", cleaned_po)
-                cleaned_row[3] = cleaned_po
-            else:
-                cleaned_row[3] = "PO Not Found"  # Handle cases where no PO is found
-            cleaned_data.append(cleaned_row)
-        data = cleaned_data
-
-    return JsonResponse({"data": cleaned_data, "packing": packing_dict})
-
 @csrf_exempt
 def save_selected(request):
     invoice = ""
@@ -159,8 +118,12 @@ def save_selected(request):
         # ตรวจสอบปุ่มที่ถูกกด
         if "print_tag" in request.POST:
             ref_tag = RefTag.objects.create()
-
             for index in selected_indices:
+                seq = 0
+                for r in request.POST:
+                    print(f"{seq} ==> {r}")
+                    seq += 1
+                
                 index = int(index)
                 po_no = request.POST.get(f"po_no_{index}")
                 cust_sup = request.POST.get(f"cust_sup_{index}")
@@ -173,11 +136,12 @@ def save_selected(request):
                 date = request.POST.get(f"date_{index}")
                 qty = request.POST.get(f"packing_{index}")
                 qr_code = f"{part_no}${qty}${po_no}${cust_sup}"
-
+                
                 Packing.objects.update_or_create(
                     part_no=part_no,
                     defaults={"std_packing": int(qty)},
                 )
+                
                 for i in range(0, 6):
                     tag = Tag()
                     tag.qr_code = qr_code
@@ -191,7 +155,7 @@ def save_selected(request):
                     tag.mc = mc
                     tag.qty = qty
                     tag.ref_tag = ref_tag
-                    if len(date) > 0:
+                    if date and len(date) > 0:
                         tag.date = date
                     tag.save()
                     # Tag.objects.create(
@@ -370,3 +334,44 @@ def upload_packing(request):
     else:
         form = UploadFileForm()
     return render(request, 'upload_packing/index.html', {'form': form})
+
+# def get_modal_data(request, fcskid):
+#     packings = Packing.objects.all()
+#     packing_dict = {
+#         packing.part_no: {
+#             "part_no": packing.part_no,
+#             "std_packing": packing.std_packing,
+#         }
+#         for packing in packings
+#     }
+
+#     with connections["formula_aaa"].cursor() as cursor:
+#         query = """
+#             Select G.FCSKID, G.FCCODE, G.FCREFNO, G.FMMEMDATA, G.FCCOOR, C.FCCODE, C.FCNAME, G.FDDATE, P.FCCODE, P.FCNAME, P.FCSNAME 
+#             from GLREF as G 
+#             INNER JOIN COOR as C ON C.FCSKID = G.FCCOOR
+#             INNER JOIN REFPROD as R ON R.FCGLREF = G.FCSKID
+#             INNER JOIN PROD as P ON P.FCSKID = R.FCPROD
+#             WHERE G.FCSKID = %s
+#             """
+#         cursor.execute(query, [fcskid])
+#         data = cursor.fetchall()
+
+#         cleaned_data = []
+#         for row in data:
+#             cleaned_row = [
+#                 field.strip() if isinstance(field, str) else field for field in row
+#             ]
+#             # Extract and clean PO number from row[3] (the 4th field)
+#             po_match = re.search(r"(PO[.-]\w+)", cleaned_row[3])
+#             if po_match:
+#                 cleaned_po = po_match.group(0)
+#                 # Remove trailing 'Rem' if it exists
+#                 cleaned_po = re.sub(r"Rem$", "", cleaned_po)
+#                 cleaned_row[3] = cleaned_po
+#             else:
+#                 cleaned_row[3] = "PO Not Found"  # Handle cases where no PO is found
+#             cleaned_data.append(cleaned_row)
+#         data = cleaned_data
+
+#     return JsonResponse({"data": cleaned_data, "packing": packing_dict})
