@@ -253,7 +253,7 @@ def save_selected(request):
                     invoice = request.POST.get(r)
                 elif seq == 2:
                     po_no = request.POST.get(r)
-                elif seq == 3:
+                elif seq == 4:
                     cust_sup = request.POST.get(r)
                 seq += 1
 
