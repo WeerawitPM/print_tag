@@ -17,7 +17,7 @@
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row mt-3">
         <div class="col">
           <label for="po_no" class="form-label">PO No.</label>
           <input type="text" class="form-control" id="po_no" name="po_no" value="{{ po_no }}" />
@@ -27,7 +27,7 @@
           <input type="text" class="form-control" id="cust_sup" name="cust_sup" value="{{ cust_sup }}" />
         </div>
       </div>
-      <div class="row">
+      {% comment %} <div class="row">
         <div class="col">
           <label for="start_date" class="form-label">Start Date</label>
           <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" />
@@ -36,23 +36,23 @@
           <label for="end_date" class="form-label">End Date</label>
           <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" />
         </div>
-      </div>
+      </div> {% endcomment %}
     </form>
     <div class="table-responsive card shadow-sm mt-3 p-3">
-        <table class="table table-borderless table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Invoice</th>
-              <th scope="col">PO</th>
-              <th scope="col">Cust/Sup</th>
-              <th scope="col">Date</th>
-              <th scope="col">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in data %}
+      <table class="table table-borderless table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Invoice</th>
+            <th scope="col">PO</th>
+            <th scope="col">Cust/Sup</th>
+            <th scope="col">Date</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in data %}
             <form method="post" action="/save_selected">
-              <tr>
+              <tr class="data-row">
                 <input type="hidden" name="fcskid_{{ forloop.counter }}" value="{{ row.0 }}" />
                 <td>
                   <input type="hidden" name="invoice_{{ forloop.counter }}" value="{{ row.2 }}" />{{ row.2 }}
@@ -61,6 +61,7 @@
                   <input type="hidden" name="po_{{ forloop.counter }}" value="{{ row.3 }}" />{{ row.3 }}
                 </td>
                 <td>
+                  <input type="hidden" name="cust_sup_name_{{ forloop.counter }}" value="{{ row.6 }}" />
                   <input type="hidden" name="cust_sup_{{ forloop.counter }}" value="{{ row.5 }}" />{{ row.6 }}
                 </td>
                 <td>
@@ -72,9 +73,9 @@
                 </td>
               </tr>
             </form>
-            {% endfor %}
-          </tbody>
-        </table>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -92,6 +93,25 @@
           $('#fcrefno').val(ui.item.value)
           return false
         }
+      })
+      $('#po_no').on('keyup', function () {
+        var value = $(this).val().toLowerCase()
+        $('.data-row').filter(function () {
+          $(this).toggle($(this).find('input[name^="po_"]').val().toLowerCase().indexOf(value) > -1)
+        })
+      })
+      $('#cust_sup').on('keyup', function () {
+        var value = $(this).val().toLowerCase()
+        $('.data-row').filter(function () {
+          $(this).toggle($(this).find('input[name^="cust_sup_name_"]').val().toLowerCase().indexOf(value) > -1)
+        })
+      })
+      $('#start_date').on('change', function () {
+        var dateValue = $(this).val()
+        console.log(dateValue)
+        $('.data-row').filter(function () {
+          $(this).toggle($(this).find('input[name^="date_"]').val().toLowerCase().indexOf(dateValue) > -1)
+        })
       })
     })
   </script>

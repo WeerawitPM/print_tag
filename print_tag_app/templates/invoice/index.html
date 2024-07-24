@@ -54,7 +54,7 @@
     </form>
     <form method="post" action="/save_selected">
       {% csrf_token %}
-      <button type="submit" class="btn btn-success mt-3" name="print_tag">Print tag</button>
+      <button type="submit" class="btn btn-success mt-3" name="print_tag" id="printTagBtn">Print tag</button>
       <div class="table-responsive card shadow-sm mt-3 p-3">
         <table class="table table-borderless table-striped">
           <thead>
@@ -114,6 +114,14 @@
     </form>
   </div>
 
+  <!-- Toast message HTML -->
+  <div class="toast align-items-center text-bg-danger border-0" id="packingToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem;">
+    <div class="d-flex">
+      <div class="toast-body fs-6">กรุณากรอก packing</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>  
+
   <!-- Include jQuery and jQuery UI -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
@@ -135,6 +143,23 @@
           $(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().indexOf(value) > -1)
         })
       })
+    })
+    
+    $('#printTagBtn').on('click', function (event) {
+      var isValid = true
+      $('input[name="selected"]:checked').each(function () {
+        var rowIndex = $(this).val()
+        var packingValue = $('input[name="packing_' + rowIndex + '"]').val()
+        if (packingValue <= 0) {
+          isValid = false
+          return false // Break the loop
+        }
+      })
+      if (!isValid) {
+        event.preventDefault()
+        var toast = new bootstrap.Toast(document.getElementById('packingToast'))
+        toast.show()
+      }
     })
   </script>
 {% endblock %}

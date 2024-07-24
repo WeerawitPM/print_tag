@@ -8,4 +8,5 @@ urlpatterns = [
     path('autocomplete', views.autocomplete, name='autocomplete'),
     path('save_selected', views.save_selected, name='save_selected'),
     path('get_modal_data/<str:fcskid>/', get_modal_data, name='get_modal_data'),
+    path('upload_packing/', views.upload_packing, name='upload_packing'),
 ]
