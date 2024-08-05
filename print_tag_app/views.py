@@ -37,8 +37,12 @@ def index(request):
                 po_match = re.search(r"(PO[.-]\w+)", cleaned_row[3])
                 if po_match:
                     cleaned_po = po_match.group(0)
+                    # Remove 'Rem' from the start, if it exists
+                    cleaned_po = re.sub(r"^Rem", "", cleaned_po)
                     # Remove trailing 'Rem' if it exists
                     cleaned_po = re.sub(r"Rem$", "", cleaned_po)
+                    # Remove 'PO.' or 'PO-'
+                    cleaned_po = re.sub(r"^PO[.-]", "", cleaned_po)
                     cleaned_row[3] = cleaned_po
                 else:
                     cleaned_row[3] = "-"  # Handle cases where no PO is found
@@ -74,8 +78,12 @@ def index(request):
                 po_match = re.search(r"(PO[.-]\w+)", cleaned_row[3])
                 if po_match:
                     cleaned_po = po_match.group(0)
+                    # Remove 'Rem' from the start, if it exists
+                    cleaned_po = re.sub(r"^Rem", "", cleaned_po)
                     # Remove trailing 'Rem' if it exists
                     cleaned_po = re.sub(r"Rem$", "", cleaned_po)
+                    # Remove 'PO.' or 'PO-'
+                    cleaned_po = re.sub(r"^PO[.-]", "", cleaned_po)
                     cleaned_row[3] = cleaned_po
                 else:
                     cleaned_row[3] = "-"  # Handle cases where no PO is found
