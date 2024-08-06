@@ -138,6 +138,10 @@ def save_selected(request):
                 index = int(index)
                 po_no = request.POST.get(f"po_no_{index}")
                 cust_sup = request.POST.get(f"cust_sup_{index}")
+                if cust_sup == "ALT":
+                    cust_sup = "115047"
+                else:
+                    pass
                 part_name = request.POST.get(f"part_name_{index}")
                 part_no = request.POST.get(f"part_no_{index}")
                 lot_mat = request.POST.get(f"lot_mat_{index}")
