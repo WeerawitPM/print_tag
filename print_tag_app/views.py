@@ -234,6 +234,10 @@ def save_selected(request):
                     po_no = request.POST.get(r)
                 elif seq == 4:
                     cust_sup = request.POST.get(r)
+                    if cust_sup == "ALT":
+                        cust_sup = "115047"
+                    else:
+                        pass
                 seq += 1
 
             qr_code = f"{po_no}${invoice}${cust_sup}"
