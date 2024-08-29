@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  <title>Product</title>
+{% endblock %}
+
+{% block content %}
+  <div class="row gap-3">
+    <form id="productForm">
+      {% csrf_token %}
+      <div class="card shadow-sm p-4">
+        <div class="row">
+          <div class="col">
+            <label for="part_no" class="form-label">Part No.</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="part_no" name="part_no" value="{{ part_no }}" />
+              <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+            </div>
+          </div>
+          <div class="col">
+            <label for="cust_sup" class="form-label">Cust/Sup</label>
+            <input type="text" class="form-control" id="cust_sup" name="cust_sup" value="{{ cust_sup }}" />
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-success mt-3" name="print_part" id="printTagBtn"><i class="bi bi-printer-fill me-2"></i>Print tag</button>
+      <div class="table-responsive card shadow-sm mt-3 p-3">
+        <table class="table table-borderless table-striped">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Part No.</th>
+              <th scope="col">Part Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in data %}
+              <tr class="data-row">
+                <td>
+                  <input type="checkbox" name="selected" value="{{ forloop.counter }}" class="form-check-input" />
+                </td>
+                <td>
+                  <input type="hidden" name="part_no_{{ forloop.counter }}" value="{{ row.0 }}" />{{ row.0 }}
+                </td>
+                <td>
+                  <input type="hidden" name="part_name_{{ forloop.counter }}" value="{{ row.1 }}" />{{ row.1 }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+
+  <!-- Toast message HTML -->
+  <div class="toast align-items-center text-bg-danger border-0" id="custSupToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem;">
+    <div class="d-flex">
+      <div class="toast-body fs-6">กรุณากรอก Cust/Sup</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Toast message HTML for no selection -->
+  <div class="toast align-items-center text-bg-warning border-0" id="selectionToast" role="alert" aria-live="assertive" aria-atomic="true" style="position: fixed; bottom: 1rem; right: 1rem;">
+    <div class="d-flex">
+      <div class="toast-body fs-6">กรุณาเลือกข้อมูลที่ต้องการ Print</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+
+  <!-- Include jQuery and jQuery UI -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css" />
+
+  <script>
+    $(document).ready(function () {
+      $('#productForm').on('submit', function (event) {
+        event.preventDefault() // ป้องกันการส่งฟอร์มโดยตรง
+    
+        var isValid = true
+        var isAnySelected = false
+    
+        // เช็คว่า Cust/Sup ถูกกรอกหรือไม่
+        var custSupValue = $('#cust_sup').val().trim()
+        if (custSupValue === '') {
+          isValid = false
+          var custSupToast = new bootstrap.Toast($('#custSupToast')[0])
+          custSupToast.show()
+        }
+    
+        // เก็บข้อมูลที่มีการเช็คเท่านั้น
+        var selectedItems = []
+        $('input[name="selected"]:checked').each(function () {
+          isAnySelected = true
+          var rowIndex = $(this).val()
+          var partNo = $('input[name="part_no_' + rowIndex + '"]').val()
+          var partName = $('input[name="part_name_' + rowIndex + '"]').val()
+          selectedItems.push({
+            part_no: partNo,
+            part_name: partName
+          })
+          console.log(selectedItems)
+        })
+    
+        if (!isAnySelected) {
+          isValid = false
+          var selectionToast = new bootstrap.Toast($('#selectionToast')[0])
+          selectionToast.show()
+        }
+    
+        if (isValid) {
+          // ส่งข้อมูลที่มีการเช็คผ่าน AJAX ไปยัง server
+          $.ajax({
+            url: '/save_product',
+            type: 'POST',
+            headers: {
+              'X-CSRFToken': '{{ csrf_token }}' // ส่ง CSRF Token
+            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+              cust_sup: custSupValue,
+              selected_items: selectedItems
+            }),
+            xhrFields: {
+              responseType: 'blob' // ใช้ responseType เป็น 'blob'
+            },
+            success: function (response) {
+              // สร้างลิงก์สำหรับดาวน์โหลดไฟล์ PDF
+              var blob = new Blob([response], { type: 'application/pdf' })
+              var link = document.createElement('a')
+              link.href = window.URL.createObjectURL(blob)
+              link.download = 'report.pdf'
+    
+              // เพิ่มลิงก์ใน DOM และคลิกเพื่อดาวน์โหลดไฟล์
+              document.body.appendChild(link)
+              link.click()
+    
+              // ลบลิงก์ออกจาก DOM หลังดาวน์โหลดเสร็จ
+              document.body.removeChild(link)
+            },
+            error: function (xhr, status, error) {
+              console.error('Error:', error)
+            }
+          })
+        }
+      })
+    })
+  </script>
+{% endblock %}

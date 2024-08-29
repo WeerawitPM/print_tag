@@ -1,13 +1,21 @@
 {% load static %}
 <nav class="navbar bg-body-tertiary shadow-sm border">
-    <div class="container-fluid d-flex">
-      <a class="navbar-brand d-flex align-items-center" href="#">
-        <img src="{% static 'print_tag_app/aaa.png' %}" alt="Logo" width="80" height="50" class="d-inline-block align-text-top me-2">
-        <span>บริษัท เอ.เอ.เอ. แมนูเฟคเจอริ่ง จำกัด</span>
-      </a>
-      <div class="d-flex fs-5 fw-medium">
-        {% include 'components/dark-light-switch.html' %}
-        <span style="color: brown;" class="me-1">IT </span> Center
-      </div>
+  <div class="container-fluid d-flex justify-content-between align-items-center">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="{% static 'print_tag_app/aaa.png' %}" alt="Logo" width="80" height="50" class="d-inline-block align-text-top me-2" />
+      <span>บริษัท เอ.เอ.เอ. แมนูเฟคเจอริ่ง จำกัด</span>
+    </a>
+    <div class="d-flex fs-5 fw-medium my-auto">
+      <ul class="navbar-nav d-flex flex-row ms-3">
+        <li class="nav-item me-3">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item me-3">
+          <a class="nav-link" href="{% url 'product' %}">Product</a>
+        </li>
+      </ul>
+      {% include 'components/dark-light-switch.html' %}
+      <span style="color: brown;" class="me-1 my-auto">IT</span> <div class="my-auto">Center</div>
     </div>
+  </div>
 </nav>
