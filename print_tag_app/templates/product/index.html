@@ -111,6 +111,9 @@
         }
     
         if (isValid) {
+          let h = {
+            'X-CSRFToken': '{{ csrf_token }}' // ส่ง CSRF Token
+          }
           // ส่งข้อมูลที่มีการเช็คผ่าน AJAX ไปยัง server
           $.ajax({
             url: '/save_product',

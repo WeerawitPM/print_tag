@@ -25,7 +25,13 @@ SECRET_KEY = "django-insecure-5ofbdvv_%317k$)3)!)l8)i$i$va_jgfy*^8#oi-kkgzwl0$7#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', 'https://edi-vcst.in.th', 'edi-vcst.in.th']
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "https://edi-vcst.in.th",
+    "edi-vcst.in.th",
+    "125.25.57.91",
+]
+CSRF_TRUSTED_ORIGINS = ["https://edi-vcst.in.th", "https://tags.edi-vcst.in.th"]
 
 
 # Application definition
@@ -37,7 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "print_tag_app"
+    "print_tag_app",
 ]
 
 MIDDLEWARE = [
@@ -83,15 +89,17 @@ DATABASES = {
         "HOST": "192.168.20.16",
         "PORT": "5432",
     },
-    'formula_aaa': {
-        'ENGINE': 'mssql',
-        'NAME': 'formula',
-        'USER': 'fm1234',
-        'PASSWORD': 'x2y2',
-        'HOST': '192.168.10.6',
-        'PORT': '1433',
+    "formula_aaa": {
+        "ENGINE": "mssql",
+        "NAME": "formula",
+        "USER": "fm1234",
+        "PASSWORD": "x2y2",
+        "HOST": "192.168.10.6",
+        "PORT": "1433",
         "Trusted_Connection": "no",
-        "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", },
+        "OPTIONS": {
+            "driver": "ODBC Driver 17 for SQL Server",
+        },
     },
 }
 
