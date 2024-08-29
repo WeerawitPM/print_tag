@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "https://edi-vcst.in.th",
     "edi-vcst.in.th",
     "125.25.57.91",
+    "tags.edi-vcst.in.th",
 ]
 CSRF_TRUSTED_ORIGINS = ["https://edi-vcst.in.th", "https://tags.edi-vcst.in.th"]
 
