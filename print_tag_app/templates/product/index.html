@@ -24,8 +24,17 @@
         </div>
       </div>
       <button type="submit" class="btn btn-success mt-3" name="print_part" id="printTagBtn"><i class="bi bi-printer-fill me-2"></i>Print tag</button>
-      <div class="table-responsive card shadow-sm mt-3 p-3">
-        <table class="table table-borderless table-striped">
+
+      <!-- Spinner ที่จะหมุนระหว่างรอโหลดข้อมูล -->
+      <div id="spinnerContainer" class="d-flex justify-content-center mt-3">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- ซ่อนตารางตอนแรก -->
+      <div id="tableContainer" class="table-responsive card shadow-sm mt-3 p-3" style="display: none;">
+        <table id="productTable" class="table table-borderless table-striped">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -74,15 +83,60 @@
   <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css" />
 
+  <!-- DataTables JS สำหรับ Bootstrap -->
+  <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
   <script>
     $(document).ready(function () {
-      $('#part_no').on('keyup', function () {
-        var value = $(this).val().toLowerCase()
-        $('.data-row').filter(function () {
-          //$(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().indexOf(value) > -1)
-          $(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().startsWith(value));
-        })
+      // เริ่มต้นด้วยการซ่อน table และแสดง spinner
+      $('#tableContainer').hide()
+    
+      // Initialize DataTables
+      var table = $('#productTable').DataTable({
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        lengthChange: false,
+        pageLength: 100,
+        columnDefs: [
+          {
+            targets: [1], // Column index for "Part No."
+            searchable: true
+          }
+        ],
+        // เมื่อโหลด DataTables เสร็จ
+        initComplete: function (settings, json) {
+          // ซ่อน spinner และแสดง table
+          $('#spinnerContainer').addClass("d-none")
+          $('#tableContainer').fadeIn()
+        }
       })
+    
+      //$('#part_no').on('keyup', function () {
+      //var value = $(this).val().toLowerCase()
+      //$('#productTable').DataTable().search(value).draw()
+      //})
+    
+      // Custom search function for startsWith
+      $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+        if (settings.nTable.id !== 'productTable') {
+          return true // Return true if this is not the table we're interested in
+        }
+    
+        var value = $('#part_no').val().toLowerCase()
+        var cellValue = data[1].toLowerCase() // Column index for "Part No."
+    
+        // Check if cellValue starts with value
+        return cellValue.startsWith(value)
+      })
+    
+      // Apply the custom search when keyup event occurs
+      $('#part_no').on('keyup', function () {
+        table.draw()
+      })
+    
       $('#productForm').on('submit', function (event) {
         event.preventDefault() // ป้องกันการส่งฟอร์มโดยตรง
     

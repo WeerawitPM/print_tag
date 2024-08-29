@@ -366,6 +366,10 @@ def product(request):
                 """
         cursor.execute(query)
         data = cursor.fetchall()
+
+    # ใช้ list comprehension เพื่อใช้ .strip() กับแต่ละค่าใน data
+    data = [(fccode.strip(), fcname.strip()) for fccode, fcname in data]
+
     return render(request, "product/index.html", {"data": data})
 
 
