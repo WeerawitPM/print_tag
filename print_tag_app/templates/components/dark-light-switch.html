@@ -10,7 +10,6 @@
   document.addEventListener('DOMContentLoaded', function () {
     // รับค่า theme จาก localStorage
     const theme = localStorage.getItem('theme');
-
     // ตั้งค่า attribute data-bs-theme ของ tag <body>
     if (theme) {
       document.body.setAttribute('data-bs-theme', theme);
