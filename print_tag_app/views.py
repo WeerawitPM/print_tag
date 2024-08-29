@@ -361,7 +361,7 @@ def upload_packing(request):
 def product(request):
     with connections["formula_aaa"].cursor() as cursor:
         query = """
-                Select TOP 1000 FCCODE, FCNAME
+                Select FCCODE, FCNAME
                 from PROD
                 """
         cursor.execute(query)
