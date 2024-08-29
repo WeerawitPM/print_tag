@@ -14,7 +14,7 @@
             <label for="part_no" class="form-label">Part No.</label>
             <div class="input-group">
               <input type="text" class="form-control" id="part_no" name="part_no" value="{{ part_no }}" />
-              <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+              <button type="button" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
             </div>
           </div>
           <div class="col">
@@ -76,6 +76,12 @@
 
   <script>
     $(document).ready(function () {
+      $('#part_no').on('keyup', function () {
+        var value = $(this).val().toLowerCase()
+        $('.data-row').filter(function () {
+          $(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().indexOf(value) > -1)
+        })
+      })
       $('#productForm').on('submit', function (event) {
         event.preventDefault() // ป้องกันการส่งฟอร์มโดยตรง
     
