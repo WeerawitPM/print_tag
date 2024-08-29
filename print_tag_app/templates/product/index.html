@@ -79,7 +79,8 @@
       $('#part_no').on('keyup', function () {
         var value = $(this).val().toLowerCase()
         $('.data-row').filter(function () {
-          $(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().indexOf(value) > -1)
+          //$(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().indexOf(value) > -1)
+          $(this).toggle($(this).find('input[name^="part_no_"]').val().toLowerCase().startsWith(value));
         })
       })
       $('#productForm').on('submit', function (event) {
