@@ -158,7 +158,7 @@ def save_selected(request):
                     defaults={"std_packing": int(qty)},
                 )
 
-                for i in range(0, 6):
+                for i in range(2):
                     tag = Tag()
                     tag.qr_code = qr_code
                     tag.po_no = po_no
@@ -389,7 +389,7 @@ def save_product(request):
                 part_name = item.get(f"part_name")
                 qr_code = f"{part_no}${part_name}${cust_sup}"
 
-                for _ in range(6):  # สร้าง 6 tags สำหรับแต่ละ part
+                for _ in range(2):  # สร้าง 6 tags สำหรับแต่ละ part
                     tag = Tag.objects.create(
                         qr_code=qr_code,
                         cust_sup=cust_sup,
