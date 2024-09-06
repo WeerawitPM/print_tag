@@ -382,6 +382,7 @@ def save_product(request):
         try:
             data = json.loads(request.body)
             cust_sup = data.get("cust_sup")
+            po_no = data.get("po_no")
             selected_items = data.get("selected_items", [])
 
             if not cust_sup or not selected_items:
@@ -400,6 +401,7 @@ def save_product(request):
                         part_no=part_no,
                         part_name=part_name,
                         ref_tag=ref_tag,
+                        po_no=po_no,
                     )
 
             # URL สำหรับล็อกอิน
