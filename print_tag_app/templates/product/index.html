@@ -19,7 +19,10 @@
           </div>
           <div class="col">
             <label for="cust_sup" class="form-label">Cust/Sup</label>
-            <input type="text" class="form-control" id="cust_sup" name="cust_sup" value="{{ cust_sup }}" />
+            <input list="cust_sup_list" id="cust_sup" name="cust_sup" class="form-control" value="{{ cust_sup }}" />
+            <datalist id="cust_sup_list">
+              <option value="115047">
+            </datalist>
           </div>
         </div>
         <div class="row mt-3">
