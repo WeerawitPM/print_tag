@@ -394,7 +394,7 @@ def save_product(request):
                 part_name = item.get(f"part_name")
                 qr_code = f"{part_no}${part_name}${cust_sup}"
 
-                for _ in range(2):  # สร้าง 6 tags สำหรับแต่ละ part
+                for _ in range(4):  # สร้าง 6 tags สำหรับแต่ละ part
                     tag = Tag.objects.create(
                         qr_code=qr_code,
                         cust_sup=cust_sup,
