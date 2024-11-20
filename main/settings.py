@@ -31,8 +31,14 @@ ALLOWED_HOSTS = [
     "edi-vcst.in.th",
     "125.25.57.91",
     "tags.edi-vcst.in.th",
+    "localhost"
 ]
-CSRF_TRUSTED_ORIGINS = ["https://edi-vcst.in.th", "https://tags.edi-vcst.in.th"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://edi-vcst.in.th",
+    "https://tags.edi-vcst.in.th",
+    # "127.0.0.1",
+    # "125.25.57.91",
+]
 
 
 # Application definition
