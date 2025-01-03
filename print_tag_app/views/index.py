@@ -20,7 +20,7 @@ def index(request):
                 WHERE G.FCREFNO LIKE %s AND G.FCBOOK = %s 
                 ORDER BY G.FDDATE DESC
             """
-            cursor.execute(query, [f"%{fcrefno}%", "TrDEJl01"])
+            cursor.execute(query, [f"%{fcrefno}%", "Vy6aA101"])
             data = cursor.fetchall()
 
             cleaned_data = []
@@ -61,7 +61,7 @@ def index(request):
                 WHERE G.FCBOOK = %s 
                 ORDER BY G.FDDATE DESC
             """
-            cursor.execute(query, ["TrDEJl01"])
+            cursor.execute(query, ["Vy6aA101"])
             data = cursor.fetchall()
 
             cleaned_data = []
@@ -108,7 +108,7 @@ def autocomplete(request):
                 INNER JOIN COOR as C ON C.FCSKID = G.FCCOOR
                 WHERE G.FCREFNO LIKE %s AND G.FCBOOK = %s ORDER BY G.FDDATE DESC
             """
-            cursor.execute(query, [f"%{term}%", "TrDEJl01"])
+            cursor.execute(query, [f"%{term}%", "Vy6aA101"])
             results = cursor.fetchall()
             part_codes = [row[2].strip() for row in results]
         return JsonResponse(part_codes, safe=False)
